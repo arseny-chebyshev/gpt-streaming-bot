@@ -9,12 +9,21 @@ async def start(message: aiogram.types.Message):
                          'работу с ChatGPT.')
 
 
+@dp.message_handler(commands='stream')
+async def switch_stream_mode(message: aiogram.types.Message,
+                             state: aiogram.dispatcher.FSMContext):
+    async with state.proxy() as state_data:
+        current_stream_mode = state_data.get('stream', True)
+        state_data['stream'] = not current_stream_mode
+    await message.answer('Способ стриминга ответа был изменён.')
+
+
 @dp.message_handler(lambda m: not m.is_command(), content_types='text')
-async def create_chat_completion(message: aiogram.types.Message):
+async def create_chat_completion(message: aiogram.types.Message,
+                                 state: aiogram.dispatcher.FSMContext):
+    state_data = await state.get_data()
     chatgpt = ChatGPTService()
     await chatgpt.complete(
         message=message,
-        # For streamed response
-        # (slower due to Telegram Flood restriction)
-        # stream=True
+        stream=state_data.setdefault('stream', True)
         )
