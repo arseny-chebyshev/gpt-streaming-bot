@@ -15,7 +15,8 @@ async def switch_stream_mode(message: aiogram.types.Message,
     async with state.proxy() as state_data:
         current_stream_mode = state_data.get('stream', True)
         state_data['stream'] = not current_stream_mode
-    await message.answer('Способ стриминга ответа был изменён.')
+        new_mode = 'отключен' if current_stream_mode else 'включен'
+        await message.answer(f'Стриминг {new_mode}.')
 
 
 @dp.message_handler(lambda m: not m.is_command(), content_types='text')
