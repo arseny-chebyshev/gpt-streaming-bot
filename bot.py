@@ -14,9 +14,14 @@ bot = aiogram.Bot(token=BOT_TOKEN)
 dp = aiogram.Dispatcher(bot=bot)
 
 
-@dp.message_handler()
-async def create_chat_completion(message: aiogram.types.Message):
+@dp.message_handler(commands='start')
+async def start(message: aiogram.types.Message):
+    await message.answer('Напиши любое сообщение, чтобы начать '
+                         'говорить с ChatGPT.')
 
+
+@dp.message_handler(lambda m: not m.is_command())
+async def create_chat_completion(message: aiogram.types.Message):
     initial_message = await message.answer('...')
     await message.answer_chat_action(aiogram.types.ChatActions.TYPING)
 
