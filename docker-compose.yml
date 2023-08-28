@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  bot:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: gpt_streaming_bot
+    command: python bot.py
+    volumes:
+      - .:/bot
+    env_file:
+      - .env
